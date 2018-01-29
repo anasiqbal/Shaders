@@ -62,12 +62,19 @@ Shader "Ai/Beginner/7_MultipleLights_Fragment"
 
 			float4 frag (vertOut vOut) : COLOR
 			{
-				float attenuation = 1.0;
+//				float attenuation = 1.0;
 
 				float3 normalDirection = vOut.normalDir;
 				float3 viewDirection = normalize (_WorldSpaceCameraPos.xyz - vOut.posWorld.xyz);
 
-				float3 lightDirection = normalize (_WorldSpaceLightPos0.xyz);
+//				float3 lightDirection = normalize (_WorldSpaceLightPos0.xyz);
+//				float3 lightDirection;
+
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - vOut.posWorld.xyz;
+				float lightDistance = length (vertexToLightSource);
+				float3 lightDirection = normalize (lerp (_WorldSpaceLightPos0.xyz, vertexToLightSource, _WorldSpaceLightPos0.w));
+
+				float attenuation = lerp(1.0, 1.0/ lightDistance, _WorldSpaceLightPos0.w);
 
 				float3 diffuseReflection = max (0.0, dot (normalDirection, lightDirection)) * attenuation * _LightColor0.rgb;
 				float3 specularReflection = attenuation * _SpecColor.rgb * max (0.0, dot (normalDirection, lightDirection)) * pow (max (0.0, dot (reflect (-lightDirection, normalDirection), viewDirection)), _Shininess);
@@ -129,18 +136,18 @@ Shader "Ai/Beginner/7_MultipleLights_Fragment"
 
 			float4 frag (vertOut vOut) : COLOR
 			{
-				float attenuation = 1.0;
+//				float attenuation = 1.0;
 
 				float3 normalDirection = vOut.normalDir;
 				float3 viewDirection = normalize (_WorldSpaceCameraPos.xyz - vOut.posWorld.xyz);
 
-				float3 lightDirection;
+//				float3 lightDirection;
 
 				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - vOut.posWorld.xyz;
 				float lightDistance = length (vertexToLightSource);
-				lightDirection = normalize (lerp (_WorldSpaceLightPos0.xyz, vertexToLightSource, _WorldSpaceLightPos0.w));
+				float3 lightDirection = normalize (lerp (_WorldSpaceLightPos0.xyz, vertexToLightSource, _WorldSpaceLightPos0.w));
 
-				attenuation = lerp(1.0, 1.0/ lightDistance, _WorldSpaceLightPos0.w);
+				float attenuation = lerp(1.0, 1.0/ lightDistance, _WorldSpaceLightPos0.w);
 
 //				if(_WorldSpaceLightPos0.w == 0.0)
 //				{
